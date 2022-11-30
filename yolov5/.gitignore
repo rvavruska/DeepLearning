@@ -34,9 +34,9 @@ data/images/*
 !data/images/zidane.jpg
 !data/images/bus.jpg
 !data/*.sh
-!data/test
-!data/train
-!data/valid
+!test/*
+!valid/*
+!train/*
 
 results*.csv
 
