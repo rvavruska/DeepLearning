@@ -20,7 +20,9 @@ class TrainDataset(Dataset):
         bboxes = self.train_df[self.train_df['ImageID'] == image_id]
 
         image = cv2.imread(f'train/data/{image_id}.jpg', cv2.IMREAD_COLOR)
+        print(image)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
+        image = cv2.resize(image, (416, 416), interpolation = cv2.INTER_AREA)
         image /= 255.0
 
         boxes = bboxes[['XMin', 'YMin', 'XMax', 'YMax']].values
