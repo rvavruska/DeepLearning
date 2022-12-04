@@ -10,9 +10,37 @@ import fiftyone.zoo as foz
 
 dataset = foz.load_zoo_dataset(
     "open-images-v6",
-    split="validation",
-    label_types=["detections", "classifications"],
-    classes=["Fedora", "Piano"],
-    max_samples=50,
+    split='train',
+    label_types=["detections"],
+    classes=["Car"],
+    max_samples=1000,
     shuffle=True,
 )
+
+session = fo.launch_app(dataset)
+
+
+dataset = foz.load_zoo_dataset(
+    "open-images-v6",
+    split='validation',
+    label_types=["detections"],
+    classes=["Car"],
+    max_samples=300,
+    shuffle=True,
+)
+
+session = fo.launch_app(dataset)
+
+
+dataset = foz.load_zoo_dataset(
+    "open-images-v6",
+    split='test',
+    label_types=["detections"],
+    classes=["Car"],
+    max_samples=100,
+    shuffle=True,
+)
+
+session = fo.launch_app(dataset)
+
+session.wait()
