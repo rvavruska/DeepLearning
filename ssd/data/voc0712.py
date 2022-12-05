@@ -107,6 +107,8 @@ class VOCDetection(data.Dataset):
         self._imgpath = osp.join('%s','%s.jpg')
         self.ids = list()
         for (year, name) in image_sets:
+            if (name == "test_names"):
+                self.root = "test/"
             rootpath = osp.join(self.root)
             for line in open(osp.join(name + '.txt')):
                 self.ids.append((rootpath, line.strip()))

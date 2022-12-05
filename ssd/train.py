@@ -14,6 +14,9 @@ import torch.nn.init as init
 import torch.utils.data as data
 import numpy as np
 import argparse
+import visdom
+
+viz = visdom.Visdom()
 
 
 def str2bool(v):
@@ -130,7 +133,7 @@ def train():
     print('Loading the dataset...')
 
     epoch_size = len(dataset) // args.batch_size
-    print('Training SSD on:', dataset.name)
+    print('Training SSD on:', dataset.name, ' for ', cfg['max_iter'])
     print('Using the specified args:')
     print(args)
 
@@ -149,13 +152,14 @@ def train():
     # create batch iterator
     batch_iterator = iter(data_loader)
     for iteration in range(args.start_iter, cfg['max_iter']):
+        epoch += 1
         if args.visdom and iteration != 0 and (iteration % epoch_size == 0):
             update_vis_plot(epoch, loc_loss, conf_loss, epoch_plot, None,
                             'append', epoch_size)
             # reset epoch loss counters
             loc_loss = 0
             conf_loss = 0
-            epoch += 1
+            
 
         if iteration in cfg['lr_steps']:
             step_index += 1
