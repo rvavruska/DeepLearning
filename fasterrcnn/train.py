@@ -55,6 +55,8 @@ def main():
             if step % 50 == 0:
                 print(f"Step {step} loss:{loss_value}")
 
+            step = step + 1
+
             lr_scheduler.step()
         
         print(f"Epoch {epoch} loss: {loss_value}")
