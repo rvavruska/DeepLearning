@@ -6,6 +6,7 @@ import torchvision
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision.models.detection import FasterRCNN
 from torch.utils.data import DataLoader, Dataset
+from os import path
 
 class TrainDataset(Dataset):
     def __init__(self, file):
@@ -13,6 +14,14 @@ class TrainDataset(Dataset):
 
         self.train_df = pd.read_csv(file)
         self.image_ids = self.train_df['ImageID'].unique()
+        delete = []
+
+        for i, id in enumerate(self.image_ids):
+            image_id = id
+            if not path.exists(f'train/data/{image_id}.jpg'):
+                delete.append(i)
+        
+        self.image_ids = np.delete(self.image_ids, delete)
 
     def __getitem__(self, index: int):
         image_id = self.image_ids[index]
@@ -20,7 +29,6 @@ class TrainDataset(Dataset):
         bboxes = self.train_df[self.train_df['ImageID'] == image_id]
 
         image = cv2.imread(f'train/data/{image_id}.jpg', cv2.IMREAD_COLOR)
-        print(image)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
         image = cv2.resize(image, (416, 416), interpolation = cv2.INTER_AREA)
         image /= 255.0
