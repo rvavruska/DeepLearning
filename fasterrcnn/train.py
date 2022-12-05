@@ -16,7 +16,7 @@ def main():
 
     train_data_loader = DataLoader(
         train_dataset,
-        batch_size=8,
+        batch_size=2,
         shuffle=True,
         num_workers=2,
         collate_fn=collate_fn
@@ -32,7 +32,7 @@ def main():
     params = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.SGD(params, lr=0.005, momentum=0.9, weight_decay=0.0005)
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
-    num_epochs = 50
+    num_epochs = 40
 
     step = 1
     print("TRAINING")
