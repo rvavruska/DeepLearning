@@ -17,6 +17,7 @@ class TrainDataset(Dataset):
         self.train_df = pd.read_csv(file)
         print(self.train_df)
         self.image_ids = self.train_df['ImageID'].unique()
+        print(self.image_ids)
         delete = []
 
         # Delete images that don't exist from list
