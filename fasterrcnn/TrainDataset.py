@@ -13,11 +13,11 @@ class TrainDataset(Dataset):
         super().__init__()
 
        # /m/0k4j = Car
-        print(file)
+        #print(file)
         self.train_df = pd.read_csv(file)
-        print(self.train_df.columns())
+        #print(self.train_df.columns)
         self.image_ids = self.train_df['ImageID'].unique()
-        print(self.image_ids)
+        #print(self.image_ids)
         delete = []
 
         # Delete images that don't exist from list
@@ -26,14 +26,14 @@ class TrainDataset(Dataset):
             if not path.exists(f'train/data/{image_id}.jpg'):
                 delete.append(i)
 
-        print(self.image_ids)
-        print(len(self.image_ids))
+        #print(self.image_ids)
+        #print(len(self.image_ids))
 
         self.image_ids = np.delete(self.image_ids, delete)
 
     def __getitem__(self, index: int):
         image_id = self.image_ids[index]
-        print(image_id)
+        #print(image_id)
         bboxes = self.train_df[self.train_df['ImageID'] == image_id]
 
         image = cv2.imread(f'train/data/{image_id}.jpg', cv2.IMREAD_COLOR)
