@@ -35,13 +35,21 @@ class TrainDataset(Dataset):
         image_id = self.image_ids[index]
         #print(image_id)
         bboxes = self.train_df[self.train_df['ImageID'] == image_id]
+        #print(bboxes)
+        
 
         image = cv2.imread(f'train/data/{image_id}.jpg', cv2.IMREAD_COLOR)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
-        image = cv2.resize(image, (416, 416), interpolation = cv2.INTER_AREA)
         image /= 255.0
 
+        # Fix the box dimensions
+        bboxes['XMin'] = bboxes['XMin'] * image.shape[1]
+        bboxes['XMax'] = bboxes['XMax'] * image.shape[1]
+        bboxes['YMin'] = bboxes['YMin'] * image.shape[0]
+        bboxes['YMax'] = bboxes['YMax'] * image.shape[0]
+
         boxes = bboxes[['XMin', 'YMin', 'XMax', 'YMax']].values
+        print(boxes)
         area = (boxes[:, 3] - boxes [:, 1] * boxes[:, 2] - boxes[:, 0])
 
         boxes = torch.as_tensor(boxes, dtype=torch.float32)

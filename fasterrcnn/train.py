@@ -34,6 +34,26 @@ def main():
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
     num_epochs = 40
 
+    # Show bounding boxes on training set
+    from matplotlib import pyplot as plt
+
+    # images,targets = next(iter(train_data_loader))
+    # images = list(image.to(device) for image in images)
+    # targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+    # print(targets[0]['boxes'])
+    # boxes = targets[0]['boxes'].cpu().numpy().astype(np.int32)
+    # img = cv2.cvtColor(images[0].permute(1,2,0).cpu().numpy(), cv2.COLOR_RGB2BGR)
+    # fig, ax= plt.subplots(1,1, figsize=(12,6))
+    # print(boxes)
+
+    # for box in boxes:
+    #     print(box[0])
+    #     cv2.rectangle(img, (box[0], box[1]), (box[2], box[3]), (220, 0, 0), 1)
+    
+    # ax.set_axis_off()
+    # ax.imshow(img)
+
+    plt.show()
     step = 1
     print("TRAINING")
     for epoch in range(num_epochs):
