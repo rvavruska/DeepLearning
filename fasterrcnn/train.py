@@ -49,7 +49,7 @@ def main():
             loss_value = losses.item()
 
             optimizer.zero_grad()
-            losses.backwards()
+            losses.backward()
             optimizer.step()
 
             if step % 50 == 0:
