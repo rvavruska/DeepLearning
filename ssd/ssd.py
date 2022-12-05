@@ -102,7 +102,7 @@ class SSD(nn.Module):
                     self.softmax(conf.view(conf.size(0), -1,
                                 self.num_classes)),                # conf preds
                     self.priors.type(type(x.data))                  # default boxes
-                )
+            )
         else:
             output = (
                 loc.view(loc.size(0), -1, 4),
