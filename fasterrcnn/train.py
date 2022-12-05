@@ -41,6 +41,7 @@ def main():
         for images, targets in train_data_loader:
             images = list(image.to(device) for image in images)
             targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+            model = model.to(device)
 
             loss_dict = model(images, targets)
 

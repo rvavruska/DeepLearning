@@ -48,6 +48,7 @@ class TrainDataset(Dataset):
         target['image_id'] = torch.tensor([index])
         target['area'] = area
         target['iscrowd'] = iscrowd
+        print(target)
 
         image = torchvision.transforms.ToTensor()(image)
         return image, target
