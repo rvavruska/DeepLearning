@@ -13,8 +13,9 @@ class TrainDataset(Dataset):
         super().__init__()
 
        # /m/0k4j = Car
-
+        print(file)
         self.train_df = pd.read_csv(file)
+        print(self.train_df)
         self.image_ids = self.train_df['ImageID'].unique()
         delete = []
 
