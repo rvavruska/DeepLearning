@@ -24,6 +24,7 @@ class TrainDataset(Dataset):
             if not path.exists(f'train/data/{image_id}.jpg'):
                 delete.append(i)
 
+        print(self.image_ids)
         print(len(self.image_ids))
 
         self.image_ids = np.delete(self.image_ids, delete)
