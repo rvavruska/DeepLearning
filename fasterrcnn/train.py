@@ -16,7 +16,7 @@ def main():
 
     train_data_loader = DataLoader(
         train_dataset,
-        batch_size=32,
+        batch_size=8,
         shuffle=True,
         num_workers=2,
         collate_fn=collate_fn
