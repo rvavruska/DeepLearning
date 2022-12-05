@@ -12,15 +12,28 @@ class TrainDataset(Dataset):
     def __init__(self, file):
         super().__init__()
 
+       # /m/0k4j = Car
+
         self.train_df = pd.read_csv(file)
         self.image_ids = self.train_df['ImageID'].unique()
         delete = []
 
+        # Delete images that don't exist from list
         for i, id in enumerate(self.image_ids):
             image_id = id
             if not path.exists(f'train/data/{image_id}.jpg'):
                 delete.append(i)
-        
+
+        self.image_ids = np.delete(self.image_ids, delete)
+        delete = []
+        # Delete boxes that are not a car
+        for i, id in enumerate(self.image_ids):
+            for j, row in self.train_df[self.train_df['ImageID'] == id].iterrows():
+                #print(row)
+                #print(j, " labels ", row['LabelName'])
+                if row['LabelName'] != '/m/0k4j':
+                    self.train_df[self.train_df['ImageID'] == id].drop(j, axis=0, inplace=True)
+
         self.image_ids = np.delete(self.image_ids, delete)
 
     def __getitem__(self, index: int):

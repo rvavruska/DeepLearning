@@ -35,7 +35,7 @@ def main():
     num_epochs = 50
 
     step = 1
-
+    print("TRAINING")
     for epoch in range(num_epochs):
         model.train()
         for images, targets in train_data_loader:
