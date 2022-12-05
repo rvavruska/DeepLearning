@@ -25,16 +25,16 @@ class TrainDataset(Dataset):
                 delete.append(i)
 
         self.image_ids = np.delete(self.image_ids, delete)
-        delete = []
+       # delete = []
         # Delete boxes that are not a car
-        for i, id in enumerate(self.image_ids):
-            for j, row in self.train_df[self.train_df['ImageID'] == id].iterrows():
-                #print(row)
-                #print(j, " labels ", row['LabelName'])
-                if row['LabelName'] != '/m/0k4j':
-                    self.train_df[self.train_df['ImageID'] == id].drop(j, axis=0, inplace=True)
+        # for i, id in enumerate(self.image_ids):
+        #     for j, row in self.train_df[self.train_df['ImageID'] == id].iterrows():
+        #         #print(row)
+        #         #print(j, " labels ", row['LabelName'])
+        #         if row['LabelName'] != '/m/0k4j':
+        #             self.train_df[self.train_df['ImageID'] == id].drop(j, axis=0, inplace=True)
 
-        self.image_ids = np.delete(self.image_ids, delete)
+        #self.image_ids = np.delete(self.image_ids, delete)
 
     def __getitem__(self, index: int):
         image_id = self.image_ids[index]
