@@ -8,5 +8,5 @@ with open('train/labels/detections_clean.csv', 'w') as out:
     # if the original line does not include the
     # strings 'py-board' or 'coffee'
     for line in lines:
-        if '/m/0k4j' in line:
+        if '/m/0k4j' in line or 'ImageID' in line:
             out.write(line)
