@@ -107,6 +107,8 @@ class VOCDetection(data.Dataset):
             for line in open(osp.join(rootpath, 'ImageSets', 'Main', name + '.txt')):
                 self.ids.append((rootpath, line.strip()))
 
+        print(self.ids)
+
     def __getitem__(self, index):
         im, gt, h, w = self.pull_item(index)
 
