@@ -35,7 +35,7 @@ def main():
     num_epochs = 40
 
     # Show bounding boxes on training set
-    from matplotlib import pyplot as plt
+    # from matplotlib import pyplot as plt
 
     # images,targets = next(iter(train_data_loader))
     # images = list(image.to(device) for image in images)
@@ -53,7 +53,7 @@ def main():
     # ax.set_axis_off()
     # ax.imshow(img)
 
-    plt.show()
+    # plt.show()
     step = 1
     print("TRAINING")
     for epoch in range(num_epochs):

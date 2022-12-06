@@ -43,9 +43,9 @@ class SSD(nn.Module):
         self.loc = nn.ModuleList(head[0])
         self.conf = nn.ModuleList(head[1])
 
-        if phase == 'test':
+        if phase == 'test': 
             self.softmax = nn.Softmax(dim=-1)
-            self.detect = Detect(num_classes, 0, 200, 0.01, 0.45)
+            self.detect = Detect(num_classes, 0, 200, 0.01, 0.45).forward
 
     def forward(self, x):
         """Applies network layers and ops on input image(s) x.
@@ -96,11 +96,12 @@ class SSD(nn.Module):
         loc = torch.cat([o.view(o.size(0), -1) for o in loc], 1)
         conf = torch.cat([o.view(o.size(0), -1) for o in conf], 1)
         if self.phase == "test":
-            output = self.detect(
-                loc.view(loc.size(0), -1, 4),                   # loc preds
-                self.softmax(conf.view(conf.size(0), -1,
-                             self.num_classes)),                # conf preds
-                self.priors.type(type(x.data))                  # default boxes
+            with torch.no_grad():
+                output = self.detect(
+                    loc.view(loc.size(0), -1, 4),                   # loc preds
+                    self.softmax(conf.view(conf.size(0), -1,
+                                self.num_classes)),                # conf preds
+                    self.priors.type(type(x.data))                  # default boxes
             )
         else:
             output = (

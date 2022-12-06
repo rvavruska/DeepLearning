@@ -18,10 +18,14 @@ else:
     import xml.etree.ElementTree as ET
 
 VOC_CLASSES = (  # always index 0
-        'car')
+    'aeroplane', 'bicycle', 'bird', 'boat',
+    'bottle', 'bus', 'car', 'cat', 'chair',
+    'cow', 'diningtable', 'dog', 'horse',
+    'motorbike', 'person', 'pottedplant',
+    'sheep', 'sofa', 'train', 'tvmonitor')
 
 # note: if you used our download scripts, this should be right
-VOC_ROOT = osp.join(HOME, "train/")
+VOC_ROOT = osp.join("train/")
 
 
 class VOCAnnotationTransform(object):
@@ -91,7 +95,7 @@ class VOCDetection(data.Dataset):
     """
 
     def __init__(self, root,
-                 image_sets=[('2007', 'trainval'), ('2012', 'trainval')],
+                 image_sets=[('2007', 'train_names')],
                  transform=None, target_transform=VOCAnnotationTransform(),
                  dataset_name='VOC0712'):
         self.root = root
@@ -99,12 +103,14 @@ class VOCDetection(data.Dataset):
         self.transform = transform
         self.target_transform = target_transform
         self.name = dataset_name
-        self._annopath = osp.join('%s', 'Annotations', '%s.xml')
-        self._imgpath = osp.join('%s', 'JPEGImages', '%s.jpg')
+        self._annopath = osp.join('%s', '%s.xml')
+        self._imgpath = osp.join('%s','%s.jpg')
         self.ids = list()
         for (year, name) in image_sets:
-            rootpath = osp.join(self.root, 'VOC' + year)
-            for line in open(osp.join(rootpath, 'ImageSets', 'Main', name + '.txt')):
+            if (name == "test_names"):
+                self.root = "test/"
+            rootpath = osp.join(self.root)
+            for line in open(osp.join(name + '.txt')):
                 self.ids.append((rootpath, line.strip()))
 
         print(self.ids)
@@ -121,6 +127,7 @@ class VOCDetection(data.Dataset):
         img_id = self.ids[index]
 
         target = ET.parse(self._annopath % img_id).getroot()
+        #print(self._imgpath % img_id)
         img = cv2.imread(self._imgpath % img_id)
         height, width, channels = img.shape
 

@@ -36,7 +36,7 @@ def str2bool(v):
 parser = argparse.ArgumentParser(
     description='Single Shot MultiBox Detector Evaluation')
 parser.add_argument('--trained_model',
-                    default='weights/ssd300_mAP_77.43_v2.pth', type=str,
+                    default='weights/VOC.pth', type=str,
                     help='Trained state_dict file path to open')
 parser.add_argument('--save_folder', default='eval/', type=str,
                     help='File path to save results')
@@ -66,14 +66,13 @@ if torch.cuda.is_available():
 else:
     torch.set_default_tensor_type('torch.FloatTensor')
 
-annopath = os.path.join(args.voc_root, 'VOC2007', 'Annotations', '%s.xml')
-imgpath = os.path.join(args.voc_root, 'VOC2007', 'JPEGImages', '%s.jpg')
-imgsetpath = os.path.join(args.voc_root, 'VOC2007', 'ImageSets',
-                          'Main', '{:s}.txt')
+annopath = os.path.join('test/', '%s.xml')
+imgpath = os.path.join('test/', '%s.xml')
+imgsetpath = os.path.join('{:s}.txt')
 YEAR = '2007'
 devkit_path = args.voc_root + 'VOC' + YEAR
 dataset_mean = (104, 117, 123)
-set_type = 'test'
+set_type = 'test_names'
 
 
 class Timer(object):
@@ -104,10 +103,11 @@ class Timer(object):
 def parse_rec(filename):
     """ Parse a PASCAL VOC xml file """
     tree = ET.parse(filename)
+    #print(filename)
     objects = []
     for obj in tree.findall('object'):
         obj_struct = {}
-        obj_struct['name'] = obj.find('name').text
+        obj_struct['name'] = obj.find('name').text.lower()
         obj_struct['pose'] = obj.find('pose').text
         obj_struct['truncated'] = int(obj.find('truncated').text)
         obj_struct['difficult'] = int(obj.find('difficult').text)
@@ -147,6 +147,7 @@ def write_voc_results_file(all_boxes, dataset):
     for cls_ind, cls in enumerate(labelmap):
         print('Writing {:s} VOC results file'.format(cls))
         filename = get_voc_results_file_template(set_type, cls)
+        #print(filename)
         with open(filename, 'wt') as f:
             for im_ind, index in enumerate(dataset.ids):
                 dets = all_boxes[cls_ind+1][im_ind]
@@ -169,10 +170,13 @@ def do_python_eval(output_dir='output', use_07=True):
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
     for i, cls in enumerate(labelmap):
+        #print(labelmap)
+        #print(cls)
         filename = get_voc_results_file_template(set_type, cls)
         rec, prec, ap = voc_eval(
            filename, annopath, imgsetpath.format(set_type), cls, cachedir,
            ovthresh=0.5, use_07_metric=use_07_metric)
+        #print(filename)
         aps += [ap]
         print('AP for {} = {:.4f}'.format(cls, ap))
         with open(os.path.join(output_dir, cls + '_pr.pkl'), 'wb') as f:
@@ -262,28 +266,34 @@ cachedir: Directory for caching the annotations
     with open(imagesetfile, 'r') as f:
         lines = f.readlines()
     imagenames = [x.strip() for x in lines]
-    if not os.path.isfile(cachefile):
+    #if not os.path.isfile(cachefile):
         # load annots
-        recs = {}
-        for i, imagename in enumerate(imagenames):
-            recs[imagename] = parse_rec(annopath % (imagename))
-            if i % 100 == 0:
-                print('Reading annotation for {:d}/{:d}'.format(
-                   i + 1, len(imagenames)))
+    recs = {}
+    for i, imagename in enumerate(imagenames):
+        recs[imagename] = parse_rec(annopath % (imagename))
+        #print(recs[imagename])
+        if i % 100 == 0:
+            print('Reading annotation for {:d}/{:d}'.format(
+                i + 1, len(imagenames)))
         # save
-        print('Saving cached annotations to {:s}'.format(cachefile))
-        with open(cachefile, 'wb') as f:
-            pickle.dump(recs, f)
-    else:
+        #print('Saving cached annotations to {:s}'.format(cachefile))
+        #with open(cachefile, 'wb') as f:
+       #     pickle.dump(recs, f)
+    #else:
         # load
-        with open(cachefile, 'rb') as f:
-            recs = pickle.load(f)
+     #   with open(cachefile, 'rb') as f:
+      #      recs = pickle.load(f)
 
     # extract gt objects for this class
+    #print("RECS: ", recs)
     class_recs = {}
     npos = 0
     for imagename in imagenames:
+        #print(classname)
+        #print(recs[imagename])
+        #print(imagename)
         R = [obj for obj in recs[imagename] if obj['name'] == classname]
+        #print(R)
         bbox = np.array([x['bbox'] for x in R])
         difficult = np.array([x['difficult'] for x in R]).astype(np.bool)
         det = [False] * len(R)
@@ -314,10 +324,13 @@ cachedir: Directory for caching the annotations
         tp = np.zeros(nd)
         fp = np.zeros(nd)
         for d in range(nd):
+            #print(nd)
             R = class_recs[image_ids[d]]
             bb = BB[d, :].astype(float)
+            #print(R['bbox'])
             ovmax = -np.inf
             BBGT = R['bbox'].astype(float)
+            #print(BBGT)
             if BBGT.size > 0:
                 # compute overlaps
                 # intersection

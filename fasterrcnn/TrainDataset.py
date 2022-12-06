@@ -7,6 +7,9 @@ from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision.models.detection import FasterRCNN
 from torch.utils.data import DataLoader, Dataset
 from os import path
+import warnings
+
+warnings.filterwarnings("ignore")
 
 class TrainDataset(Dataset):
     def __init__(self, file):
@@ -39,17 +42,21 @@ class TrainDataset(Dataset):
         
 
         image = cv2.imread(f'train/data/{image_id}.jpg', cv2.IMREAD_COLOR)
+        image = cv2.resize(image, (416, 416), interpolation = cv2.INTER_AREA)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
         image /= 255.0
 
+        warnings.filterwarnings("ignore")
+
         # Fix the box dimensions
-        bboxes['XMin'] = bboxes['XMin'] * image.shape[1]
-        bboxes['XMax'] = bboxes['XMax'] * image.shape[1]
-        bboxes['YMin'] = bboxes['YMin'] * image.shape[0]
-        bboxes['YMax'] = bboxes['YMax'] * image.shape[0]
+        bboxes.loc[:, 'XMin'] = bboxes.loc[:, 'XMin'] * image.shape[1]
+        #print(bboxes.loc[:, 'XMin'] * image.shape[1])
+        bboxes.loc[:, 'XMax'] = bboxes.loc[:, 'XMax'] * image.shape[1]
+        bboxes.loc[:, 'YMin'] = bboxes.loc[:, 'YMin'] * image.shape[0]
+        bboxes.loc[:, 'YMax'] = bboxes.loc[:, 'YMax'] * image.shape[0]
 
         boxes = bboxes[['XMin', 'YMin', 'XMax', 'YMax']].values
-        print(boxes)
+        #print(boxes)
         area = (boxes[:, 3] - boxes [:, 1] * boxes[:, 2] - boxes[:, 0])
 
         boxes = torch.as_tensor(boxes, dtype=torch.float32)
